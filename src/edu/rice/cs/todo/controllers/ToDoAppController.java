@@ -64,6 +64,8 @@ public class ToDoAppController
 
     private void handleAddButtonClicked(Void forget)
     {
+        //this is probably a hack-y implementation. Violates information hiding
+        //should have an event hub in AddTaskView for the controller to call?
         System.out.println("Controller got message from View: " + _addTaskView.get_taskName() );
     }
 
