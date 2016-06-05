@@ -18,4 +18,15 @@ public class TaskRepositoryInMemory implements TaskRepository
     {
         return Collections.unmodifiableCollection(_tasks);
     }
+    @Override
+    public boolean addTask(String description)
+    {
+        Task newTask = new Task(description, false);
+
+        if (_tasks.contains(newTask)){
+            return false;
+        }
+
+        return _tasks.add(newTask);
+    }
 }

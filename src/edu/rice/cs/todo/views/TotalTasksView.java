@@ -17,8 +17,4 @@ public class TotalTasksView extends JPanel
         this.add(totalsLabel);
     }
 
-    public void observing()
-    {
-
-    }
 }

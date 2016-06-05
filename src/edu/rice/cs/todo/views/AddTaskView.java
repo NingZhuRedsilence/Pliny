@@ -1,7 +1,6 @@
 package edu.rice.cs.todo.views;
 
 import edu.rice.cs.lib.*;
-
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,8 +13,10 @@ public class AddTaskView extends JPanel {
     //button for user behavior
     private JTextField _inputBox = new JTextField();
     private JButton _btnAddTask = new JButton();
-    private final EventController<Void> _onAddTaskBtnClick = new EventController<>();
-    public final Event<Void> OnAddTaskBtnClicked = _onAddTaskBtnClick;
+
+    //changed type parameter from Void to String to solve type conflict
+    private final EventController<String> _onAddTaskRequest = new EventController<>();
+    public final Event<String> OnAddTaskRequest = _onAddTaskRequest;
 
     public String get_taskName() {
         return _taskName;
@@ -27,7 +28,6 @@ public class AddTaskView extends JPanel {
 
     private String _taskName;
 
-
     public AddTaskView() {
         super.add(_inputBox);
         super.add(_btnAddTask);
@@ -37,41 +37,15 @@ public class AddTaskView extends JPanel {
 
         _btnAddTask.addActionListener(new ActionListener()
         {
-
             //can't resolve _taskName here?
             @Override
             public void actionPerformed(ActionEvent e)
             {
                 _taskName = _inputBox.getText();
-                _onAddTaskBtnClick.fireEvent(null);
+                _onAddTaskRequest.fireEvent(_taskName);
             }
         });
     }
 
 
-    //method to add a task
-    private void get(String _taskName)
-    {
-        //call controller or have an adapter to controller?
-
-    }
 }
-
-/*
-    //textField for user input
-    //button for user behavior
-    _inputBox.setText("Enter a task here");
-    _btnAddTask.setText("Add task");
-    _btnAddTask.addActionListener(new ActionListener()
-    {
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            String taskName = _inputBox.getText();
-            //send data to Model or viewModel?
-            //to Controller --> single point of control
-            addTask(taskName);
-            //viewModel + view make a observer-observable pattern
-            //http://www.vogella.com/tutorials/DesignPatternObserver/article.html
-        }
-    }*/

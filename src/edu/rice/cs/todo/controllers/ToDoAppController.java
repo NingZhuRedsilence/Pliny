@@ -21,52 +21,45 @@ public class ToDoAppController
 
     private final AddTaskView _addTaskView;
 
+    private final TaskRepository _repos;
+
+    private final TaskListViewModel _vm;
+
     public ToDoAppController(TaskRepository repos)
     {
+        _repos = repos;
         /**
          * Translate model to view model.
          */
-        TaskListViewModel vm;
-        {
-            List<String> taskDescriptions = new LinkedList<>();
-
-            for (Task task : repos.getTasks())
-            {
-                if (!task.Completed)
-                    taskDescriptions.add(task.Description);
-            }
-            vm = new TaskListViewModel(taskDescriptions);
-        }
-
+        _vm = translateToVM(repos);
 
         /**
          * Create views.
          */
         ToolbarView toolbarView = new ToolbarView();
         _addTaskView = new AddTaskView();
-        _totalsTaskView = new TotalTasksView(vm);
-        _listTasksView = new ListTasksView(vm);
+        _totalsTaskView = new TotalTasksView(_vm);
+        _listTasksView = new ListTasksView(_vm);
         _masterView = new MasterView(toolbarView, _listTasksView, _addTaskView);
 
         /**
-         * Wire-up views to respond to user actions.
+         * Wire-up views to respond to user actions. Observer-observable
          */
-        toolbarView.OnListClicked.addListener(this::handleListButtonClicked);
-        toolbarView.OnTotalsClicked.addListener(this::handleTotalsButtonClicked);
-
-        _addTaskView.OnAddTaskBtnClicked.addListener(this::handleAddButtonClicked);
+        toolbarView.OnViewListRequest.addListener(this::handleListButtonClicked);
+        toolbarView.OnViewTotalRequest.addListener(this::handleTotalsButtonClicked);
+        // why :: ?
+        _addTaskView.OnAddTaskRequest.addListener(this::handleAddTaskRequest);
     }
 
     public void start()
     {
         _masterView.showView();
     }
-
-    private void handleAddButtonClicked(Void forget)
+    //Void is void, has only once instance -- null
+    private void handleAddTaskRequest(String message)
     {
-        //this is probably a hack-y implementation. Violates information hiding
-        //should have an event hub in AddTaskView for the controller to call?
-        System.out.println("Controller got message from View: " + _addTaskView.get_taskName() );
+        //System.out.println("Controller got message from View: " + message );
+        addTask(message);
     }
 
     private void handleListButtonClicked(Void forget)
@@ -78,4 +71,33 @@ public class ToDoAppController
     {
         _masterView.setDisplayView(_totalsTaskView);
     }
+
+    private void addTask(String taskDescription) {
+        //create a task and add to the domain model
+        _repos.addTask(taskDescription);
+
+        //change in dm triggers update of the data-to-vm & vm in controller
+        //doesn't need observer-observable pattern 'cos controller itself is doing all the work
+        //and don't need to observe itself
+        _vm.addTask(taskDescription);
+
+        //update vm triggers update view by observer-observable
+        //only implemented in ListTaskView for now
+    }
+
+    private TaskListViewModel translateToVM(TaskRepository repos) {
+        List<String> taskDescriptions = new LinkedList<>();
+        // Should make the list a field in controller or not? Don't think so
+        // the data is save in view model
+        for (Task task : repos.getTasks())
+        {
+            if (!task.Completed)
+                taskDescriptions.add(task.Description);
+        }
+        return new TaskListViewModel(taskDescriptions);
+    }
+
+
+
+
 }

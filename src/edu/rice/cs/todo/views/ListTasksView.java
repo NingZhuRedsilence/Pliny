@@ -9,13 +9,35 @@ import javax.swing.*;
  */
 public class ListTasksView extends JPanel
 {
-    JLabel _tasksLabel = new JLabel();
-
+    JTextArea _tasksTextArea = new JTextArea();
+    TaskListViewModel _vm;
+    String changes;
     public ListTasksView(TaskListViewModel vm)
     {
-        String list = String.join("<br>", vm.getTasks());
-        _tasksLabel.setText("<html>" + list + "</html>");
+        _vm = vm;
+        displayDataFromVM(_vm);
+        _vm.OnChange.addListener(this::handleChangeInVM);
 
-        super.add(_tasksLabel);
+    }
+
+    public void update(){
+
+    }
+
+    private void handleChangeInVM(String message)
+    {
+        //System.out.println("Controller got message from View: " + message );
+        _tasksTextArea.append("\n" + message);
+    }
+
+    private void displayDataFromVM(TaskListViewModel vm){
+        //JTextArea can't interpret html?
+        //String list = String.join("<br>", vm.getTasks());
+        //_tasksTextArea.setText("<html>" + list + "</html>");
+        String list = String.join("\n", vm.getTasks());
+        _tasksTextArea.setText( list);
+        super.add(_tasksTextArea);
+
+
     }
 }

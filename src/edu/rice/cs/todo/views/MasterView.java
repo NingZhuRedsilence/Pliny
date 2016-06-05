@@ -52,8 +52,6 @@ public class MasterView extends JFrame
         _wrapper.invalidate();
         super.validate();
         super.repaint();
-
-
     }
 
     public void showView()

@@ -16,11 +16,11 @@ public class ToolbarView extends JPanel
 
     private final EventController<Void> _onListClickedController = new EventController<>();
 
-    public final Event<Void> OnListClicked = _onListClickedController;
+    public final Event<Void> OnViewListRequest = _onListClickedController;
 
     private final EventController<Void> _onTotalsClickedController = new EventController<>();
 
-    public final Event<Void> OnTotalsClicked = _onTotalsClickedController;
+    public final Event<Void> OnViewTotalRequest = _onTotalsClickedController;
 
     public ToolbarView()
     {
